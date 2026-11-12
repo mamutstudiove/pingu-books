@@ -97,10 +97,9 @@ async function loadEuroRate(){
     if(!response.ok)throw new Error('No se pudo obtener la tasa');
     const data=await response.json();
     const value=Number(data.EUR),date=String(data.effective_date||'');
-    const todayCaracas=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Caracas',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-    if(!Number.isFinite(value)||value<=0||!/^\d{4}-\d{2}-\d{2}$/.test(date)||date!==todayCaracas)throw new Error('La tasa recibida no corresponde a la fecha vigente en Venezuela');
+    if(!Number.isFinite(value)||value<=0||!/^\d{4}-\d{2}-\d{2}$/.test(date))throw new Error('Respuesta de tasa inválida');
     $('rate').value=String(value);euroRateDate=date;euroRateFetchedAt=Date.now();euroRateReady=true;
-    $('rateStatus').textContent=`Tasa euro BCV vigente: ${date.split('-').reverse().join('/')} · Fuente: datos BCV (servicio independiente).`;
+    $('rateStatus').textContent=`Tasa euro BCV (fecha de vigencia: ${date.split('-').reverse().join('/')}) · Fuente: datos BCV (servicio independiente).`;
     updateRate();
   }catch(err){$('rateStatus').textContent='No pudimos verificar la tasa euro BCV vigente. Intenta actualizar. El pago permanece bloqueado para evitar montos incorrectos.';updateRate();}
 }
