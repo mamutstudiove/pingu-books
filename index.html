@@ -91,16 +91,17 @@ body{overflow-x:hidden}
 </div><div class="photo-modal" id="photoModal" onclick="if(event.target===this)closePhotoModal()" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true"><div class="photo-modal-panel"><button class="modal-close" type="button" onclick="closePhotoModal()" aria-label="Cerrar">✕</button><div class="eyebrow">Elige tus recuerdos</div><h2 id="modalTitle">¿Cuántas fotos quieres?</h2><p class="muted" id="modalSubtitle"></p><div class="modal-price"><small>Total de este producto</small><strong id="modalPrice">5,00 €</strong></div><label>Selecciona un paquete</label><div class="quick-packs" id="modalPacks"></div><label for="modalQty">O escribe la cantidad exacta</label><div class="modal-counter"><button type="button" onclick="modalAdjust(-1)" aria-label="Restar una foto">−</button><input id="modalQty" type="number" inputmode="numeric" min="1" max="9999" step="1" oninput="modalInput()" aria-label="Número de fotografías"><button type="button" onclick="modalAdjust(1)" aria-label="Agregar una foto">+</button></div><button id="modalFill" class="modal-fill" type="button" onclick="modalComplete()"></button><p id="modalError" class="error" aria-live="polite"></p><button class="btn modal-submit" type="button" onclick="confirmPhotoModal()">Agregar al carrito →</button></div></div><div class="cartbar" id="cartbar" hidden><div><small>Tu carrito · <span id="cartCount">0</span> productos</small><b id="cartTotal">0,00 €</b></div><button type="button" onclick="openCart()">Ver carrito →</button></div><div class="cartdrawer" id="cartdrawer" onclick="if(event.target===this)closeCart()"><div class="cartpanel" role="dialog" aria-modal="true" aria-label="Tu carrito"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="font:normal 32px Georgia,serif;margin:0">Tu carrito ♡</h2><button class="btn light" onclick="closeCart()">Cerrar ✕</button></div><p class="muted">Puedes seguir viendo productos o finalizar tu pedido cuando quieras.</p><div id="cartLines"></div><div class="total"><span>Total de productos</span><b id="cartDrawerTotal">0,00 €</b></div><div class="cart-actions"><button class="btn light" onclick="closeCart()">Seguir comprando</button><button class="btn" onclick="checkout()">Finalizar pedido →</button></div></div></div></main><footer class="foot">PINGU BOOKS · Recuerdos que puedes tocar ♡</footer>
 
 <style>
-.pingu-helper{position:fixed;right:16px;bottom:92px;z-index:59;display:flex;align-items:flex-end;gap:8px;pointer-events:none}
-.pingu-helper svg{width:72px;height:90px;filter:drop-shadow(0 5px 8px #30231f25)}
+.pingu-helper{position:fixed;right:16px;bottom:92px;z-index:59;display:flex;align-items:flex-end;gap:8px;pointer-events:none;max-width:calc(100vw - 16px)}
+.pingu-helper .pingu-drag{pointer-events:auto;touch-action:none;cursor:grab;border:0;background:transparent;padding:0;display:block;line-height:0;user-select:none;-webkit-user-select:none}.pingu-helper .pingu-drag:active{cursor:grabbing}.pingu-helper svg{width:72px;height:90px;filter:drop-shadow(0 5px 8px #30231f25)}
 .pingu-speech{background:#fffaf4;border:1px solid #e5c9b6;border-radius:16px 16px 4px 16px;padding:10px 12px;max-width:190px;font-size:12px;font-weight:650;color:#382923;box-shadow:0 5px 16px #30231f15;display:none}
-.pingu-speech.show{display:block}
+.pingu-speech.show{display:block}.pingu-helper.is-dragging .pingu-speech{display:none!important}.pingu-helper.on-left{flex-direction:row-reverse}.pingu-helper.on-left .pingu-speech{border-radius:16px 16px 16px 4px}.pingu-helper .pingu-drag:focus-visible{outline:2px solid #b98070;outline-offset:3px;border-radius:15px}
 .pingu-helper .pingu-close{pointer-events:auto;position:absolute;right:-6px;top:-8px;border:0;border-radius:50%;background:#fff;color:#382923;width:23px;height:23px;cursor:pointer;box-shadow:0 2px 8px #0002}
 @media(max-width:650px){.pingu-helper{right:10px;bottom:84px}.pingu-helper svg{width:55px;height:70px}.pingu-speech{max-width:145px;font-size:11px}}
 @media(prefers-reduced-motion:no-preference){.pingu-helper svg{animation:pingu-bob 3.5s ease-in-out infinite}@keyframes pingu-bob{50%{transform:translateY(-4px)}}}
 </style>
 <div class="pingu-helper" id="pinguHelper" aria-live="polite">
- <div class="pingu-speech" id="pinguSpeech"></div>
+ <div class="pingu-speech" id="pinguSpeech" role="status"></div>
+ <button class="pingu-drag" id="pinguDrag" type="button" aria-label="Toca al pingüinito para escucharlo o arrástralo para moverlo" title="¡Tócame o muéveme!">
  <svg viewBox="0 0 90 112" role="img" aria-label="Pingüinito de Pingu Books, de cuerpo completo" xmlns="http://www.w3.org/2000/svg">
  <ellipse cx="44" cy="105" rx="30" ry="5" fill="#30231f" opacity=".12"/>
  <ellipse cx="21" cy="101" rx="15" ry="7" fill="#e5a73c"/><ellipse cx="67" cy="101" rx="15" ry="7" fill="#e5a73c"/>
@@ -114,6 +115,7 @@ body{overflow-x:hidden}
  <circle cx="26" cy="46" r="4" fill="#e8a7a3" opacity=".65"/><circle cx="64" cy="46" r="4" fill="#e8a7a3" opacity=".65"/>
  <path d="M45 75 C31 64 28 81 45 92 C62 81 59 64 45 75Z" fill="#c58d7b"/>
  </svg>
+ </button>
  <button class="pingu-close" type="button" onclick="document.getElementById('pinguHelper').remove()" aria-label="Ocultar pingüinito">×</button>
 </div>
 <div class="pingu-login-backdrop" id="pinguLogin" role="dialog" aria-modal="true" aria-labelledby="pinguLoginTitle" onclick="if(event.target===this)closePinguLogin()"><div class="pingu-login-panel"><button class="pingu-login-x" type="button" onclick="closePinguLogin()" aria-label="Cerrar">×</button><div style="font-size:45px">🐧</div><h2 id="pinguLoginTitle">¡Bienvenido a Pingu Books!</h2><p>Inicia sesión con Google para acceder más fácilmente a tu cuenta. También puedes comprar sin registrarte.</p><button class="pingu-google-btn" id="pinguGoogleButton" type="button" onclick="pinguSignIn()">🌐 &nbsp; Continuar con Google</button><p id="pinguLoginError" class="pingu-login-error" role="alert"></p><button class="pingu-login-dismiss" type="button" onclick="closePinguLogin()">Seguir como invitado</button></div></div>
@@ -143,6 +145,65 @@ function showPingu(message,duration=3300){
  speech.textContent=message;speech.classList.add('show');
  clearTimeout(pinguTimeout);pinguTimeout=setTimeout(()=>speech.classList.remove('show'),duration);
 }
+
+// Mascota interactiva: tocar para escuchar frases; arrastrar para cambiar su posición.
+const PINGU_POSITION_KEY='pingu-helper-position-v1';
+const PINGU_CUTE_PHRASES=[
+ '¡Holiii! Qué lindo tenerte por aquí ♡',
+ '¡Tus recuerdos se merecen un abracito! 🐧',
+ '¿Y si imprimimos esa foto que tanto te gusta? 📸',
+ '¡Yo te acompaño a elegir tus foticos! ♡',
+ 'Las fotos bonitas merecen salir del celular ✨',
+ '¡Pío, pío! Vine a repartir ternurita 🐧',
+ 'Una fotico hoy, un recuerdo para siempre ♡',
+ '¡Qué emoción! Aquí guardamos momentos felices 💕',
+ 'Si necesitas ayuda, aquí estoy cerquita ♡',
+ '¡Amo los recuerdos que se pueden abrazar! 🐧',
+ '¡Ese álbum va a quedar preciosooo! ♡',
+ '¡Un besito de pingüinito para ti! 💗'
+];
+let pinguPhraseIndex=-1;
+function pinguSayCute(){pinguPhraseIndex=(pinguPhraseIndex+1)%PINGU_CUTE_PHRASES.length;showPingu(PINGU_CUTE_PHRASES[pinguPhraseIndex],4500)}
+function pinguInitDrag(){
+ const helper=document.getElementById('pinguHelper'),button=document.getElementById('pinguDrag');
+ if(!helper||!button)return;
+ const width=()=>button.getBoundingClientRect().width||55;
+ const height=()=>button.getBoundingClientRect().height||70;
+ function place(x,y,save){
+  const w=width(),h=height(),pad=8;
+  x=Math.min(Math.max(pad,x),Math.max(pad,innerWidth-w-pad));
+  y=Math.min(Math.max(pad,y),Math.max(pad,innerHeight-h-pad));
+  helper.style.left=x+'px';helper.style.top=y+'px';helper.style.right='auto';helper.style.bottom='auto';
+  helper.classList.toggle('on-left',x<innerWidth/2);
+  if(save){try{localStorage.setItem(PINGU_POSITION_KEY,JSON.stringify({x:x/innerWidth,y:y/innerHeight}))}catch(e){}}
+ }
+ let saved=null;
+ try{saved=JSON.parse(localStorage.getItem(PINGU_POSITION_KEY)||'null')}catch(e){}
+ if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y))place(saved.x*innerWidth,saved.y*innerHeight,false);
+ let gesture=null,ignoreClick=false;
+ button.addEventListener('pointerdown',e=>{
+  if(e.button!==0&&e.pointerType==='mouse')return;
+  const r=button.getBoundingClientRect();
+  gesture={id:e.pointerId,startX:e.clientX,startY:e.clientY,baseX:r.left,baseY:r.top,moved:false};
+  button.setPointerCapture(e.pointerId);
+ });
+ button.addEventListener('pointermove',e=>{
+  if(!gesture||gesture.id!==e.pointerId)return;
+  const dx=e.clientX-gesture.startX,dy=e.clientY-gesture.startY;
+  if(!gesture.moved&&Math.hypot(dx,dy)>7){gesture.moved=true;helper.classList.add('is-dragging');clearTimeout(pinguTimeout)}
+  if(gesture.moved){place(gesture.baseX+dx,gesture.baseY+dy,false);e.preventDefault()}
+ });
+ function finish(e){
+  if(!gesture||gesture.id!==e.pointerId)return;
+  if(gesture.moved){const r=button.getBoundingClientRect();place(r.left,r.top,true);ignoreClick=true;setTimeout(()=>{ignoreClick=false},80)}
+  else if(e.type==='pointerup'){pinguSayCute();ignoreClick=true;setTimeout(()=>{ignoreClick=false},80)}
+  helper.classList.remove('is-dragging');gesture=null;
+ }
+ button.addEventListener('pointerup',finish);button.addEventListener('pointercancel',finish);
+ button.addEventListener('click',e=>{if(ignoreClick){e.preventDefault();return}if(e.detail===0)pinguSayCute()});
+ window.addEventListener('resize',()=>{if(helper.style.left){const r=button.getBoundingClientRect();place(r.left,r.top,false)}});
+}
+pinguInitDrag();
 
 function cartQuantity(){return (s.pol>0?1:0)+(s.cla>0?1:0)+ALBUMS.reduce((n,a)=>n+s.albums[a.cap],0)}
 function addToCart(type){if(type==='pol'||type==='cla'){openPhotoModal(type);return}if(type.startsWith('album'))s.albums[Number(type.slice(5))]++;renderAlbums();render();showPingu('¡Un álbum más para tus recuerdos! ♡');if($('order').style.display==='block')renderCheckout();else if($('cartbar')&&!$('cartbar').hidden){$('cartbar').animate([{opacity:.75},{opacity:1}],{duration:220})}}
