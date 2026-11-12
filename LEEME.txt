@@ -1,1 +1,6 @@
-Pingu Books: demo de tienda. Abre index.html desde un navegador o publícalo en Vercel.\nIMPORTANTE: configura WHATSAPP_NEGOCIO en index.html, datos de Pago Móvil y tasa de conversión. El comprobante NO se sube ni se adjunta automáticamente: el cliente lo adjunta manualmente en WhatsApp. No hay base de datos ni verificación automática. Las imágenes de producto son capturas de referencia y pueden reemplazarse por fotografías originales.\n
+PINGU BOOKS - SITIO WEB
+Sube index.html y las 8 fotos .jpg a la raíz del repositorio GitHub. No subas el ZIP sin descomprimir.
+Álbumes: 48 Polaroids 8 EUR, 40 clásicas 13 EUR, 64 Polaroids 15 EUR, 108 Polaroids 20 EUR. NO incluyen fotos.
+La tasa euro BCV requiere ingreso manual y confirmación: no hay actualización automática.
+El comprobante NO se adjunta automáticamente al WhatsApp; el cliente debe enviarlo por el chat. El sitio no almacena pedidos ni verifica pagos.
+WhatsApp: +58 424 5879110.
